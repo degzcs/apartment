@@ -17,7 +17,7 @@ module Apartment
     attr_writer(*WRITER_METHODS)
 
     def_delegators :connection_class, :connection, :connection_config, :establish_connection
-
+   
     # configure apartment with available options
     def configure
       yield self if block_given?
@@ -25,6 +25,10 @@ module Apartment
 
     def tenant_names
       extract_tenant_config.keys.map(&:to_s)
+    end
+    
+    def root_path
+      defined?(Rails) ? Rails.root : Dir.pwd 
     end
 
     def tenants_with_config
@@ -65,13 +69,13 @@ module Apartment
     def database_schema_file
       return @database_schema_file if defined?(@database_schema_file)
 
-      @database_schema_file = Rails.root.join('db', 'schema.rb')
+      @database_schema_file = "#{ root_path }/db/schema.rb"
     end
 
     def seed_data_file
       return @seed_data_file if defined?(@seed_data_file)
 
-      @seed_data_file = "#{Rails.root}/db/seeds.rb"
+      @seed_data_file = "#{ root_path }/db/seeds.rb"
     end
 
     # Reset all the config for Apartment
