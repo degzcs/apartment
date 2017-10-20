@@ -169,11 +169,12 @@ module Apartment
       #   @return {String} tenant name with Rails environment *optionally* prepended
       #
       def environmentify(tenant)
-        unless tenant.include?(Rails.env)
+        tmp_environment = defined?(Rails) ? Rails.env : ENV['RACK_ENV']
+        unless tenant.include?(tmp_environment)
           if Apartment.prepend_environment
-            "#{Rails.env}_#{tenant}"
+            "#{tmp_environment}_#{tenant}"
           elsif Apartment.append_environment
-            "#{tenant}_#{Rails.env}"
+            "#{tenant}_#{tmp_environment}"
           else
             tenant
           end
